@@ -6,13 +6,14 @@ import com.shiptrack.dto.OperatorStatsResponse;
 import com.shiptrack.service.OperatorService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/operators")
-@CrossOrigin(origins = "*")
+@PreAuthorize("hasRole('ADMIN')")
 public class OperatorController {
 
     private final OperatorService operatorService;

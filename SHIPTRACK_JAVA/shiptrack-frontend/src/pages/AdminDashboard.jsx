@@ -34,6 +34,15 @@ function AdminDashboard() {
     const [composeTarget, setComposeTarget] = useState("ROLE_SUPPORT");
     const [composeSending, setComposeSending] = useState(false);
 
+    const [createUserForm, setCreateUserForm] = useState({
+        fullName: "",
+        email: "",
+        phone: "",
+        password: "",
+        role: "ROLE_CUSTOMER"
+    });
+    const [creatingUser, setCreatingUser] = useState(false);
+
     useEffect(() => {
 
         const fetchDashboardData = async () => {
@@ -226,6 +235,108 @@ function AdminDashboard() {
         }
     };
 
+    const roleLabels = {
+        ROLE_CUSTOMER: "Customer",
+        ROLE_SUPPORT: "Support",
+        ROLE_DRIVER: "Driver"
+    };
+
+    const refreshUserAnalytics = async () => {
+        try {
+            const userResponse = await api.get(
+                "/users/analytics",
+                adminAuthConfig()
+            );
+            setUserAnalytics(userResponse.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleCreateUserChange = (event) => {
+        const { name, value } = event.target;
+        setCreateUserForm((current) => ({
+            ...current,
+            [name]: value
+        }));
+    };
+
+    const handleCreateUser = async (event) => {
+        event.preventDefault();
+
+        const {
+            fullName,
+            email,
+            phone,
+            password,
+            role
+        } = createUserForm;
+
+        if (!fullName.trim()) {
+            toast.error("Enter the full name.");
+            return;
+        }
+
+        if (!email.trim()) {
+            toast.error("Enter the email ID.");
+            return;
+        }
+
+        if (!password) {
+            toast.error("Enter a password.");
+            return;
+        }
+
+        if (password.length < 6) {
+            toast.error("Password must be at least 6 characters.");
+            return;
+        }
+
+        if (!phone.trim()) {
+            toast.error("Enter the phone number.");
+            return;
+        }
+
+        setCreatingUser(true);
+
+        try {
+            const response = await api.post(
+                "/users",
+                {
+                    fullName: fullName.trim(),
+                    email: email.trim(),
+                    phone: phone.trim(),
+                    password,
+                    role
+                },
+                adminAuthConfig()
+            );
+
+            const created = response.data;
+
+            toast.success(
+                `Account created for ${created.fullName}. They can log in and access their ${roleLabels[role] || role} dashboard.`
+            );
+
+            setCreateUserForm({
+                fullName: "",
+                email: "",
+                phone: "",
+                password: "",
+                role: "ROLE_CUSTOMER"
+            });
+
+            await refreshUserAnalytics();
+        } catch (error) {
+            toast.error(
+                error.response?.data?.message ||
+                "Failed to create user."
+            );
+        } finally {
+            setCreatingUser(false);
+        }
+    };
+
     const sendShipmentRequestResponse = async (request, shipmentCreated) => {
         const adminMessage = shipmentCreated
             ? ""
@@ -392,6 +503,86 @@ function AdminDashboard() {
                 />
 
                 <ManagementPanel />
+
+                <div className="card shadow border-0 mt-5 mb-4">
+                    <div className="card-body">
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                            <h4 className="mb-0">
+                                <i className="bi bi-person-plus me-2"></i>
+                                Create User
+                            </h4>
+                            <span className="text-muted small">
+                                Create customer, support or driver accounts and assign their dashboard.
+                            </span>
+                        </div>
+
+                        <form onSubmit={handleCreateUser}>
+                            <div className="row g-3">
+                                <div className="col-md-2">
+                                    <select
+                                        name="role"
+                                        className="form-select"
+                                        value={createUserForm.role}
+                                        onChange={handleCreateUserChange}
+                                    >
+                                        <option value="ROLE_CUSTOMER">Customer</option>
+                                        <option value="ROLE_SUPPORT">Support</option>
+                                        <option value="ROLE_DRIVER">Driver</option>
+                                    </select>
+                                </div>
+                                <div className="col-md-3">
+                                    <input
+                                        type="text"
+                                        name="fullName"
+                                        className="form-control"
+                                        placeholder="Full name"
+                                        value={createUserForm.fullName}
+                                        onChange={handleCreateUserChange}
+                                    />
+                                </div>
+                                <div className="col-md-3">
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        className="form-control"
+                                        placeholder="Email ID"
+                                        value={createUserForm.email}
+                                        onChange={handleCreateUserChange}
+                                    />
+                                </div>
+                                <div className="col-md-2">
+                                    <input
+                                        type="text"
+                                        name="phone"
+                                        className="form-control"
+                                        placeholder="Phone number"
+                                        value={createUserForm.phone}
+                                        onChange={handleCreateUserChange}
+                                    />
+                                </div>
+                                <div className="col-md-2">
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        className="form-control"
+                                        placeholder="Password"
+                                        value={createUserForm.password}
+                                        onChange={handleCreateUserChange}
+                                    />
+                                </div>
+                                <div className="col-12 d-flex justify-content-end">
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary"
+                                        disabled={creatingUser}
+                                    >
+                                        {creatingUser ? "Creating..." : "Create User"}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
                 <UserAnalyticsSection
                     userAnalytics={userAnalytics}

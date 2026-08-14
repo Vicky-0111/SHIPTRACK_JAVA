@@ -2,8 +2,10 @@ package com.shiptrack.service;
 
 import com.shiptrack.dto.ChangePasswordRequest;
 import com.shiptrack.dto.UpdateProfileRequest;
+import com.shiptrack.dto.UpdateProfileResponse;
 import com.shiptrack.dto.UserProfileResponse;
 import com.shiptrack.entity.User;
+import com.shiptrack.exception.UserAlreadyExistsException;
 import com.shiptrack.exception.UserNotFoundException;
 import com.shiptrack.repository.UserRepository;
 import org.springframework.security.core.Authentication;
@@ -16,11 +18,14 @@ public class SettingsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public SettingsService(UserRepository userRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
 
@@ -71,7 +76,7 @@ public class SettingsService {
     
 
 
-    public UserProfileResponse updateProfile(UpdateProfileRequest request) {
+    public UpdateProfileResponse updateProfile(UpdateProfileRequest request) {
 
         User user = getCurrentUser();
 
@@ -80,6 +85,35 @@ public class SettingsService {
                 !request.getFullName().trim().isEmpty()) {
 
             user.setFullName(request.getFullName().trim());
+        }
+
+        
+        if (request.getEmail() != null &&
+                !request.getEmail().trim().isEmpty()) {
+
+            String newEmail =
+                    request.getEmail()
+                            .trim()
+                            .toLowerCase();
+
+            if (!newEmail.equals(user.getEmail())) {
+
+                if (!newEmail.contains("@")
+                        || newEmail.startsWith("@")
+                        || newEmail.endsWith("@")) {
+
+                    throw new IllegalArgumentException(
+                            "Enter a valid email ID.");
+                }
+
+                userRepository.findByEmail(newEmail)
+                        .ifPresent(existing -> {
+                            throw new UserAlreadyExistsException(
+                                    "An account with this email already exists.");
+                        });
+
+                user.setEmail(newEmail);
+            }
         }
 
         
@@ -92,8 +126,13 @@ public class SettingsService {
         
         userRepository.save(user);
 
-        
-        return convertToProfileResponse(user);
+        String token =
+                jwtService.generateToken(
+                        user.getEmail());
+
+        return new UpdateProfileResponse(
+                convertToProfileResponse(user),
+                token);
     }
 
     

@@ -2,6 +2,7 @@ package com.shiptrack.controller;
 
 import com.shiptrack.dto.ChangePasswordRequest;
 import com.shiptrack.dto.UpdateProfileRequest;
+import com.shiptrack.dto.UpdateProfileResponse;
 import com.shiptrack.dto.UserProfileResponse;
 import com.shiptrack.service.SettingsService;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/settings")
-@CrossOrigin(origins = "*")
 public class SettingsController {
 
     private final SettingsService settingsService;
@@ -33,10 +33,10 @@ public class SettingsController {
 
 
     @PutMapping("/profile")
-    public ResponseEntity<UserProfileResponse> updateProfile(
+    public ResponseEntity<UpdateProfileResponse> updateProfile(
             @RequestBody UpdateProfileRequest request) {
 
-        UserProfileResponse response =
+        UpdateProfileResponse response =
                 settingsService.updateProfile(request);
 
         return ResponseEntity.ok(response);

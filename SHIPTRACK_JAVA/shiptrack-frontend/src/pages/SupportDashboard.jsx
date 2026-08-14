@@ -239,6 +239,51 @@ function SupportDashboard() {
         }
     ];
 
+    const shipmentStatCards = [
+        {
+            label: "Total Shipments",
+            value: stats.Total || 0,
+            icon: "bi-box-seam",
+            color: "primary"
+        },
+        {
+            label: "Delivered",
+            value: stats.Delivered || 0,
+            icon: "bi-check2-circle",
+            color: "success"
+        },
+        {
+            label: "In Transit",
+            value: stats["In Transit"] || 0,
+            icon: "bi-truck",
+            color: "warning"
+        },
+        {
+            label: "Pending",
+            value: stats.Pending || 0,
+            icon: "bi-hourglass-split",
+            color: "secondary"
+        },
+        {
+            label: "Created",
+            value: stats.Created || 0,
+            icon: "bi-plus-circle",
+            color: "primary"
+        },
+        {
+            label: "Out For Delivery",
+            value: stats["Out For Delivery"] || 0,
+            icon: "bi-geo-alt",
+            color: "info"
+        },
+        {
+            label: "Cancelled",
+            value: stats.Cancelled || 0,
+            icon: "bi-x-circle",
+            color: "danger"
+        }
+    ];
+
     const filteredTickets = tickets.filter((ticket) => {
 
         if (ticketStatus && ticket.status !== ticketStatus) {
@@ -268,6 +313,39 @@ function SupportDashboard() {
     const inProgressTickets = filteredTickets.filter((ticket) => ticket.status === "IN_PROGRESS").length;
     const resolvedTickets = filteredTickets.filter((ticket) => ticket.status === "RESOLVED").length;
     const escalatedTickets = filteredTickets.filter((ticket) => ticket.status === "ESCALATED").length;
+
+    const ticketStatCards = [
+        {
+            label: "Total Tickets",
+            value: totalTickets,
+            icon: "bi-ticket",
+            color: "secondary"
+        },
+        {
+            label: "Open",
+            value: openTickets,
+            icon: "bi-envelope-open",
+            color: "primary"
+        },
+        {
+            label: "In Progress",
+            value: inProgressTickets,
+            icon: "bi-hourglass-split",
+            color: "warning"
+        },
+        {
+            label: "Resolved",
+            value: resolvedTickets,
+            icon: "bi-check-circle",
+            color: "success"
+        },
+        {
+            label: "Escalated",
+            value: escalatedTickets,
+            icon: "bi-exclamation-triangle",
+            color: "danger"
+        }
+    ];
 
     const todayKey = new Date().toDateString();
     const resolvedToday = filteredTickets.filter((ticket) => {
@@ -309,137 +387,21 @@ function SupportDashboard() {
 
             {}
 
-            <div className="row mb-4">
-
-                <div className="col-md-3">
-
-                    <div className="card shadow border-0">
-
-                        <div className="card-body text-center">
-
-                            <h6>Total Shipments</h6>
-
-                            <h3>
-                                {stats.Total || 0}
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div className="col-md-3">
-
-                    <div className="card shadow border-0">
-
-                        <div className="card-body text-center">
-
-                            <h6>Delivered</h6>
-
-                            <h3>
-                                {stats.Delivered || 0}
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div className="col-md-3">
-
-                    <div className="card shadow border-0">
-
-                        <div className="card-body text-center">
-
-                            <h6>In Transit</h6>
-
-                            <h3>
-                                {stats["In Transit"] || 0}
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div className="col-md-3">
-
-                    <div className="card shadow border-0">
-
-                        <div className="card-body text-center">
-
-                            <h6>Pending</h6>
-
-                            <h3>
-                                {stats.Pending || 0}
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
             <div className="row g-3 mb-4">
 
-                <div className="col-md-4">
-
-                    <div className="card shadow border-0">
-
-                        <div className="card-body text-center">
-
-                            <h6>Created</h6>
-
-                            <h3>
-                                {stats.Created || 0}
-                            </h3>
-
+                {shipmentStatCards.map((card) => (
+                    <div className="col-lg-3 col-md-6 col-sm-6" key={card.label}>
+                        <div className="card shadow-sm h-100">
+                            <div className="card-body d-flex align-items-center">
+                                <i className={`bi ${card.icon} text-${card.color} me-3 fs-3`}></i>
+                                <div>
+                                    <div className="small text-muted">{card.label}</div>
+                                    <div className="fw-bold fs-5">{card.value}</div>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
-
-                </div>
-
-                <div className="col-md-4">
-
-                    <div className="card shadow border-0">
-
-                        <div className="card-body text-center">
-
-                            <h6>Out For Delivery</h6>
-
-                            <h3>
-                                {stats["Out For Delivery"] || 0}
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div className="col-md-4">
-
-                    <div className="card shadow border-0">
-
-                        <div className="card-body text-center">
-
-                            <h6>Cancelled</h6>
-
-                            <h3>
-                                {stats.Cancelled || 0}
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                </div>
+                ))}
 
             </div>
 
@@ -451,50 +413,19 @@ function SupportDashboard() {
 
             <div className="row g-3 mb-4">
 
-                <div className="col-md-4 col-lg">
-                    <div className="card shadow border-0 h-100">
-                        <div className="card-body text-center">
-                            <h6>Total Tickets</h6>
-                            <h3>{totalTickets}</h3>
+                {ticketStatCards.map((card) => (
+                    <div className="col-lg col-md-4 col-sm-6" key={card.label}>
+                        <div className="card shadow-sm h-100">
+                            <div className="card-body d-flex align-items-center">
+                                <i className={`bi ${card.icon} text-${card.color} me-3 fs-3`}></i>
+                                <div>
+                                    <div className="small text-muted">{card.label}</div>
+                                    <div className="fw-bold fs-5">{card.value}</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div className="col-md-4 col-lg">
-                    <div className="card shadow border-0 h-100">
-                        <div className="card-body text-center">
-                            <h6>Open</h6>
-                            <h3 className="text-primary">{openTickets}</h3>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="col-md-4 col-lg">
-                    <div className="card shadow border-0 h-100">
-                        <div className="card-body text-center">
-                            <h6>In Progress</h6>
-                            <h3 className="text-warning">{inProgressTickets}</h3>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="col-md-4 col-lg">
-                    <div className="card shadow border-0 h-100">
-                        <div className="card-body text-center">
-                            <h6>Resolved</h6>
-                            <h3 className="text-success">{resolvedTickets}</h3>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="col-md-4 col-lg">
-                    <div className="card shadow border-0 h-100">
-                        <div className="card-body text-center">
-                            <h6>Escalated</h6>
-                            <h3 className="text-danger">{escalatedTickets}</h3>
-                        </div>
-                    </div>
-                </div>
+                ))}
 
             </div>
 

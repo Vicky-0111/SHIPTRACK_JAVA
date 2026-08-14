@@ -74,11 +74,13 @@ public class DashboardController {
     }
 
     @GetMapping("/live-monitoring")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<LiveDeliveryMonitorResponse> getLiveMonitoring() {
         return dashboardService.getLiveMonitoring();
     }
 
     @GetMapping("/shipment-monitoring")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<ShipmentMonitoringResponse> getShipmentMonitoring() {
         return dashboardService.getShipmentMonitoring();
     }

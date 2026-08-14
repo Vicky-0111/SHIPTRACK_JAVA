@@ -12,7 +12,6 @@ function Register() {
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
-    const [role, setRole] = useState("ROLE_CUSTOMER");
 
     const handleRegister = async (e) => {
 
@@ -27,7 +26,7 @@ function Register() {
                     email,
                     phone,
                     password,
-                    role
+                    role: "ROLE_CUSTOMER"
                 }
             );
 
@@ -122,27 +121,9 @@ function Register() {
                                     required
                                 />
 
-                                <select
-                                    className="form-control mb-3"
-                                    value={role}
-                                    onChange={(e) =>
-                                        setRole(
-                                            e.target.value
-                                        )
-                                    }
-                                >
-                                    <option value="ROLE_CUSTOMER">
-                                        Customer
-                                    </option>
-
-                                    <option value="ROLE_DRIVER">
-                                        Driver
-                                    </option>
-
-                                    <option value="ROLE_SUPPORT">
-                                        Support
-                                    </option>
-                                </select>
+                                <p className="text-muted small mb-3">
+                                    Registration is available for customer accounts only.
+                                </p>
 
                                 <button
                                     type="submit"

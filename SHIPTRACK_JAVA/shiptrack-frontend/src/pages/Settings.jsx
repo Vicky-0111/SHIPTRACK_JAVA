@@ -95,6 +95,20 @@ const Settings = () => {
 
     const saveProfile = async () => {
 
+        if (!profile.email || !profile.email.trim()) {
+            setErrorMessage("Email ID is required.");
+            return;
+        }
+
+        if (
+            !profile.email.trim().includes("@") ||
+            profile.email.trim().startsWith("@") ||
+            profile.email.trim().endsWith("@")
+        ) {
+            setErrorMessage("Enter a valid email ID.");
+            return;
+        }
+
         try {
 
             setSavingProfile(true);
@@ -105,6 +119,7 @@ const Settings = () => {
 
             const requestBody = {
                 fullName: profile.fullName,
+                email: profile.email.trim().toLowerCase(),
                 phone: profile.phone
             };
 
@@ -118,7 +133,13 @@ const Settings = () => {
                 }
             );
 
-            setProfile(response.data);
+            const data = response.data;
+
+            setProfile(data.profile);
+
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("email", data.profile.email);
+            localStorage.setItem("role", data.profile.role);
 
             setSuccessMessage("Profile updated successfully.");
 
@@ -350,8 +371,9 @@ const Settings = () => {
                                 <input
                                     type="email"
                                     className="form-control"
+                                    name="email"
                                     value={profile.email}
-                                    disabled
+                                    onChange={handleProfileChange}
                                 />
 
                             </div>

@@ -7,6 +7,7 @@ import com.shiptrack.dto.tracking.MapLocationResponse;
 import com.shiptrack.dto.tracking.ShipmentLocationResponse;
 import com.shiptrack.service.DeliveryMonitoringService;
 import com.shiptrack.service.TrackingService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class TrackingController {
     }
 
     @PutMapping("/location")
+    @PreAuthorize("hasRole('DRIVER')")
     public DriverLocationResponse updateDriverLocation(
 
             @RequestBody DriverLocationRequest request) {
@@ -37,6 +39,7 @@ public class TrackingController {
     }
 
     @GetMapping("/drivers")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<MapLocationResponse> getAllDriverLocations() {
         return trackingService.getAllDriverLocations();
     }

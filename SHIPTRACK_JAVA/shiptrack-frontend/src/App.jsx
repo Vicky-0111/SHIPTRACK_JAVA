@@ -267,14 +267,45 @@ function App() {
 
           <Route
               path="/notifications"
-              element={<Notifications />}
+              element={
+                  <PrivateRoute>
+                      <Layout>
+                          <Notifications />
+                      </Layout>
+                  </PrivateRoute>
+              }
           />
 
-          <Route path="/reports" element={<Reports />} />
+          <Route
+              path="/reports"
+              element={
+                  <PrivateRoute>
+
+                      <RoleProtectedRoute
+                          allowedRoles={[
+                              "ROLE_ADMIN"
+                          ]}
+                      >
+
+                          <Layout>
+                              <Reports />
+                          </Layout>
+
+                      </RoleProtectedRoute>
+
+                  </PrivateRoute>
+              }
+          />
 
           <Route
               path="/settings"
-              element={<Settings />}
+              element={
+                  <PrivateRoute>
+                      <Layout>
+                          <Settings />
+                      </Layout>
+                  </PrivateRoute>
+              }
           />
 
           <Route

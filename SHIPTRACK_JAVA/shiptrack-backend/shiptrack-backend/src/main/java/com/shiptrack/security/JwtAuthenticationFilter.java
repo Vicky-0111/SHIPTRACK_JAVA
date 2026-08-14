@@ -2,6 +2,7 @@ package com.shiptrack.security;
 
 import com.shiptrack.service.CustomUserDetailsService;
 import com.shiptrack.service.JwtService;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,8 +50,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token =
                 authHeader.substring(7);
 
-        String email =
-                jwtService.extractEmail(token);
+        String email;
+        try {
+            email =
+                    jwtService.extractEmail(token);
+        } catch (JwtException | IllegalArgumentException e) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (email != null &&
                 SecurityContextHolder.getContext()

@@ -54,6 +54,62 @@ public class UserService {
                         ? "ROLE_CUSTOMER"
                         : requestedRole.trim();
 
+        if (!"ROLE_CUSTOMER".equals(roleName)) {
+
+            throw new IllegalArgumentException(
+                    "Only customer accounts can be registered. Admin, support and driver accounts are created by an administrator.");
+        }
+
+        Role role = roleRepository
+                .findByName(roleName)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Role not found"));
+
+        User user = new User();
+
+        user.setFullName(
+                request.getFullName().trim());
+
+        user.setEmail(email);
+
+        user.setPassword(
+                passwordEncoder.encode(
+                        request.getPassword()));
+
+        user.setPhone(
+                request.getPhone());
+
+        user.setRole(role);
+
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public User createUserByAdmin(RegisterRequest request) {
+
+        String email =
+                request.getEmail()
+                        .trim()
+                        .toLowerCase();
+
+        if (userRepository.findByEmail(email).isPresent()) {
+
+            throw new UserAlreadyExistsException(
+                    "An account with this email already exists.");
+        }
+
+        String roleName =
+                request.getRole().trim();
+
+        if (!"ROLE_CUSTOMER".equals(roleName)
+                && !"ROLE_SUPPORT".equals(roleName)
+                && !"ROLE_DRIVER".equals(roleName)) {
+
+            throw new IllegalArgumentException(
+                    "Role must be ROLE_CUSTOMER, ROLE_SUPPORT or ROLE_DRIVER");
+        }
+
         Role role = roleRepository
                 .findByName(roleName)
                 .orElseThrow(() ->
@@ -98,6 +154,20 @@ public class UserService {
 
             throw new InvalidCredentialsException(
                     "Enter correct email or password.");
+        }
+
+        if (request.getRole() != null &&
+                !request.getRole().trim().isEmpty()) {
+
+            String selectedRole =
+                    request.getRole().trim();
+
+            if (!selectedRole.equals(
+                    user.getRole().getName())) {
+
+                throw new InvalidCredentialsException(
+                        "The selected account type does not match this account.");
+            }
         }
 
         return user;

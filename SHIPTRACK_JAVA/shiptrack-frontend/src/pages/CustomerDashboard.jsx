@@ -436,29 +436,41 @@ function CustomerDashboard() {
     const statusBoxes = [
         {
             label: "Total Shipments",
-            value: stats.totalShipments
+            value: stats.totalShipments,
+            icon: "bi-box-seam",
+            color: "primary"
         },
         {
             label: "Active",
-            value: stats.activeShipments
+            value: stats.activeShipments,
+            icon: "bi-lightning-charge-fill",
+            color: "success"
         },
         {
             label: "Delivered",
-            value: stats.deliveredShipments
+            value: stats.deliveredShipments,
+            icon: "bi-check2-circle",
+            color: "success"
         },
         {
             label: "Pending",
-            value: stats.pendingShipments
+            value: stats.pendingShipments,
+            icon: "bi-hourglass-split",
+            color: "warning"
         },
         {
             label: "Delivery Success Rate",
             value: stats.deliverySuccessRate != null
                 ? `${stats.deliverySuccessRate}%`
-                : "0%"
+                : "0%",
+            icon: "bi-activity",
+            color: "info"
         },
         {
             label: "Cancelled",
-            value: stats.cancelledShipments
+            value: stats.cancelledShipments,
+            icon: "bi-x-circle",
+            color: "danger"
         }
     ];
 
@@ -653,11 +665,14 @@ function CustomerDashboard() {
             <div className="row g-3 mb-4">
 
                 {statusBoxes.map((item) => (
-                    <div className="col-12 col-md-3" key={item.label}>
-                        <div className="card shadow border-0 h-100">
-                            <div className="card-body text-center">
-                                <h6 className="mb-2">{item.label}</h6>
-                                <h3 className="mb-0">{item.value}</h3>
+                    <div className="col-lg-3 col-md-6 col-sm-6" key={item.label}>
+                        <div className="card shadow-sm h-100">
+                            <div className="card-body d-flex align-items-center">
+                                <i className={`bi ${item.icon} text-${item.color} me-3 fs-3`}></i>
+                                <div>
+                                    <div className="small text-muted">{item.label}</div>
+                                    <div className="fw-bold fs-5">{item.value}</div>
+                                </div>
                             </div>
                         </div>
                     </div>

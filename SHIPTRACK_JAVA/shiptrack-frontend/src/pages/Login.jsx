@@ -16,7 +16,7 @@ function Login() {
     const [fullName, setFullName] = useState("");
     const [phone, setPhone] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [role, setRole] = useState("ROLE_CUSTOMER");
+    const [loginRole, setLoginRole] = useState("ROLE_CUSTOMER");
     const [loading, setLoading] = useState(false);
 
     const resetRegisterFields = () => {
@@ -24,7 +24,6 @@ function Login() {
         setPhone("");
         setPassword("");
         setConfirmPassword("");
-        setRole("ROLE_CUSTOMER");
     };
 
     const switchMode = (nextMode) => {
@@ -181,7 +180,8 @@ function Login() {
                     "/auth/login",
                     {
                         email: email.trim(),
-                        password: password
+                        password: password,
+                        role: loginRole
                     }
                 );
 
@@ -299,7 +299,7 @@ function Login() {
                     email: email.trim(),
                     password,
                     phone: phone.trim(),
-                    role
+                    role: "ROLE_CUSTOMER"
                 }
             );
 
@@ -373,6 +373,27 @@ function Login() {
                                             setPassword(e.target.value)
                                         }
                                     />
+
+                                    <select
+                                        className="form-select mb-3"
+                                        value={loginRole}
+                                        onChange={(e) =>
+                                            setLoginRole(e.target.value)
+                                        }
+                                    >
+                                        <option value="ROLE_CUSTOMER">
+                                            Customer
+                                        </option>
+                                        <option value="ROLE_ADMIN">
+                                            Admin
+                                        </option>
+                                        <option value="ROLE_SUPPORT">
+                                            Support
+                                        </option>
+                                        <option value="ROLE_DRIVER">
+                                            Driver
+                                        </option>
+                                    </select>
 
                                     <button
                                         type="submit"
@@ -448,21 +469,9 @@ function Login() {
                                         }
                                     />
 
-                                    <select
-                                        className="form-control mb-3"
-                                        value={role}
-                                        onChange={(e) =>
-                                            setRole(e.target.value)
-                                        }
-                                    >
-                                        <option value="ROLE_CUSTOMER">
-                                            Customer
-                                        </option>
-
-                                        <option value="ROLE_DRIVER">
-                                            Driver
-                                        </option>
-                                    </select>
+                                    <p className="text-muted small mb-3">
+                                        Registration is available for customer accounts only.
+                                    </p>
 
                                     <button
                                         type="submit"
